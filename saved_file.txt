@@ -1,0 +1,3 @@
+Name: Ramazan, Age: 20, Weight: 60.20
+Name: Ibragim, Age: 30, Weight: 65.00
+Name: Dmitriy, Age: 35, Weight: 81.10
