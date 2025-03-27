@@ -4,9 +4,9 @@
 int main() {
   ObjectArray *arr = create_object_array(5);
 
-  add_object(arr, "Alice", 30, 65.5);
-  add_object(arr, "Bob", 25, 70.3);
-  add_object(arr, "Charlie", 35, 80.1);
+  add_object(arr, "Ibragim", 30, 65);
+  add_object(arr, "Ramazan", 20, 60.2);
+  add_object(arr, "Dmitriy", 35, 81.1);
 
   printf("Initial objects:\n");
   print_objects(arr, stdout);
@@ -15,7 +15,7 @@ int main() {
   sort_objects(arr, 1, 1);
   print_objects(arr, stdout);
 
-  save_objects_to_file(arr, "objects.txt");
+  save_objects_to_file(arr, "saved_file.txt");
 
   ObjectArray *arr2 = create_object_array(5);
   load_objects_from_file(arr2, "objects.txt");
@@ -25,7 +25,6 @@ int main() {
   printf("\nBar chart (Age):\n");
   print_bar_chart(arr, 1);
 
-  printf("\nPie chart (Weight):\n");
   print_pie_chart(arr, 2);
 
   free_object_array(arr);
