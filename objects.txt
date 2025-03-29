@@ -1,0 +1,5 @@
+Name: Srgey, Age:52, Weight: 70
+Name: Dima, Age:40, Weight: 100
+Name: Misha, Age:30, Weight: 60
+error string
+Name: Gleb, Age:13, Weight: 40

@@ -4,12 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NUM_COLORS 12
-const char *colors[] = {"\x1B[31m", "\x1B[32m", "\x1B[33m", "\x1B[34m",
-                        "\x1B[35m", "\x1B[36m", "\x1B[91m", "\x1B[92m",
-                        "\x1B[93m", "\x1B[94m", "\x1B[95m", "\x1B[96m"};
-#define RESET "\x1B[0m"
-
 ObjectArray *create_object_array(int initial_capacity) {
   if (initial_capacity <= 0) {
     fprintf(stderr, "Error: Initial capacity must be positive\n");
@@ -192,85 +186,4 @@ void load_objects_from_file(ObjectArray *arr, const char *filename) {
     fprintf(stderr, "Error reading file %s\n", filename);
   }
   fclose(file);
-}
-
-void print_bar_chart(const ObjectArray *arr, int field) {
-  if (!arr || arr->size == 0) {
-    fprintf(stderr, "No data for bar chart\n");
-    return;
-  }
-
-  double max_val = 0;
-  for (int i = 0; i < arr->size; i++) {
-    double val = (field == 1) ? arr->objects[i].age : arr->objects[i].weight;
-    if (val > max_val)
-      max_val = val;
-  }
-
-  if (max_val <= 0) {
-    printf("All values are zero or negative\n");
-    return;
-  }
-
-  const int chart_width = 80;
-  int column_width = chart_width / arr->size;
-  column_width = column_width > 0 ? column_width : 1;
-
-  const int height = 20;
-  for (int h = height; h > 0; h--) {
-    for (int i = 0; i < arr->size; i++) {
-      double val = (field == 1) ? arr->objects[i].age : arr->objects[i].weight;
-      int bar_height = (int)((val / max_val) * height);
-
-      printf("%s", colors[i % NUM_COLORS]);
-      for (int w = 0; w < column_width; w++) {
-        printf(bar_height >= h ? "█" : " ");
-      }
-      printf(RESET);
-    }
-    printf("\n");
-  }
-
-  printf("\nLegend:\n");
-  for (int i = 0; i < arr->size; i++) {
-    printf("%s█%s %s: %s (%.2f)\n", colors[i % NUM_COLORS], RESET,
-           arr->objects[i].name, field == 1 ? "Age" : "Weight",
-           field == 1 ? (double)arr->objects[i].age : arr->objects[i].weight);
-  }
-}
-
-void print_pie_chart(const ObjectArray *arr, int field) {
-  if (!arr || arr->size == 0) {
-    fprintf(stderr, "No data for pie chart\n");
-    return;
-  }
-
-  if (field != 1 && field != 2) {
-    fprintf(stderr, "Invalid field. Use 1 for Age or 2 for Weight\n");
-    return;
-  }
-
-  double total = 0;
-  for (int i = 0; i < arr->size; i++) {
-    double val = (field == 1) ? arr->objects[i].age : arr->objects[i].weight;
-    if (val < 0) {
-      fprintf(stderr, "Negative values are not supported\n");
-      return;
-    }
-    total += val;
-  }
-
-  if (total <= 0) {
-    fprintf(stderr, "Total must be positive\n");
-    return;
-  }
-
-  printf("\nPie Chart (%s):\n", field == 1 ? "Age" : "Weight");
-  for (int i = 0; i < arr->size; i++) {
-    double val = (field == 1) ? arr->objects[i].age : arr->objects[i].weight;
-    double percent = (val / total) * 100.0;
-    printf("%s█%s %-20s: %6.2f%% %s(%g)%s\n", colors[i % NUM_COLORS], RESET,
-           arr->objects[i].name, percent, "\x1B[2m", val, RESET);
-  }
-  printf("\n");
 }

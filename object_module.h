@@ -1,5 +1,6 @@
 #ifndef OBJECT_MODULE_H
 #define OBJECT_MODULE_H
+#include "SDL.h"
 #include <stdio.h>
 typedef struct {
   char name[50];
@@ -21,7 +22,5 @@ void sort_objects(ObjectArray *arr, int field, int ascending);
 void print_objects(const ObjectArray *arr, FILE *stream);
 void save_objects_to_file(const ObjectArray *arr, const char *filename);
 void load_objects_from_file(ObjectArray *arr, const char *filename);
-void print_bar_chart(const ObjectArray *arr, int field);
-void print_pie_chart(const ObjectArray *arr, int field);
 
 #endif // OBJECT_MODULE_H
