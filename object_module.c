@@ -4,6 +4,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+int find_object_by_name(ObjectArray *arr, const char *name) {
+  for (int i = 0; i < arr->size; i++) {
+    if (strcmp(arr->objects[i].name, name) == 0) {
+      return i;
+    }
+  }
+  return -1;
+}
 ObjectArray *create_object_array(int initial_capacity) {
   if (initial_capacity <= 0) {
     fprintf(stderr, "Error: Initial capacity must be positive\n");
@@ -35,10 +43,10 @@ void free_object_array(ObjectArray *arr) {
   }
 }
 
-void add_object(ObjectArray *arr, const char *name, int age, double weight) {
+int add_object(ObjectArray *arr, const char *name, int age, double weight) {
   if (!arr || !name) {
     fprintf(stderr, "Invalid arguments to add_object\n");
-    return;
+    return 0;
   }
 
   if (arr->size >= arr->capacity) {
@@ -47,7 +55,7 @@ void add_object(ObjectArray *arr, const char *name, int age, double weight) {
         (Object *)realloc(arr->objects, new_capacity * sizeof(Object));
     if (!new_objects) {
       fprintf(stderr, "Memory reallocation failed in add_object\n");
-      return;
+      return -1;
     }
     arr->objects = new_objects;
     arr->capacity = new_capacity;
@@ -59,6 +67,7 @@ void add_object(ObjectArray *arr, const char *name, int age, double weight) {
   obj->age = age;
   obj->weight = weight;
   arr->size++;
+  return 1;
 }
 
 void remove_object(ObjectArray *arr, int index) {
@@ -131,12 +140,25 @@ void sort_objects(ObjectArray *arr, int field, int ascending) {
 }
 
 void print_objects(const ObjectArray *arr, FILE *stream) {
-  if (!arr || !stream)
+  if (!arr || !stream || arr->size == 0) {
+    fprintf(stream, "No objects to display\n");
     return;
-  for (int i = 0; i < arr->size; i++) {
-    fprintf(stream, "Name: %s, Age: %d, Weight: %.2f\n", arr->objects[i].name,
-            arr->objects[i].age, arr->objects[i].weight);
   }
+
+  // Заголовок таблицы
+  fprintf(stream, "┌─────┬─────────────────┬───────┬─────────┐\n");
+  fprintf(stream, "│ %-3s │ %-15s │ %-5s │ %-7s │\n", "ID", "Name", "Age",
+          "Weight");
+  fprintf(stream, "├─────┼─────────────────┼───────┼─────────┤\n");
+
+  // Данные
+  for (int i = 0; i < arr->size; i++) {
+    fprintf(stream, "│ %-3d │ %-15s │ %-5d │ %-7.1f │\n", i,
+            arr->objects[i].name, arr->objects[i].age, arr->objects[i].weight);
+  }
+
+  // Нижняя граница таблицы
+  fprintf(stream, "└─────┴─────────────────┴───────┴─────────┘\n");
 }
 
 void save_objects_to_file(const ObjectArray *arr, const char *filename) {
@@ -155,14 +177,14 @@ void save_objects_to_file(const ObjectArray *arr, const char *filename) {
   }
 }
 
-void load_objects_from_file(ObjectArray *arr, const char *filename) {
+int load_objects_from_file(ObjectArray *arr, const char *filename) {
   if (!arr || !filename)
-    return;
+    return 0;
 
   FILE *file = fopen(filename, "r");
   if (!file) {
     fprintf(stderr, "Failed to open %s: %s\n", filename, strerror(errno));
-    return;
+    return -1;
   }
 
   char line[512];
@@ -185,4 +207,5 @@ void load_objects_from_file(ObjectArray *arr, const char *filename) {
     fprintf(stderr, "Error reading file %s\n", filename);
   }
   fclose(file);
+  return 1;
 }
