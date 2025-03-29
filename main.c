@@ -6,10 +6,9 @@
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
-#define FONT_PATH "arial.ttf" // Путь к файлу шрифта
+#define FONT_PATH "arial.ttf"
 
 int main() {
-  // Инициализация данных
   ObjectArray *arr = create_object_array(5);
   add_object(arr, "Ibragim", 30, 65);
   add_object(arr, "Ramazan", 20, 60.2);
@@ -30,7 +29,6 @@ int main() {
     return 1;
   }
 
-  // Загрузка шрифта
   TTF_Font *font = TTF_OpenFont(FONT_PATH, 16);
   if (!font) {
     fprintf(stderr, "Failed to load font: %s\n", TTF_GetError());
@@ -52,7 +50,6 @@ int main() {
     return 1;
   }
 
-  // Создание рендерера
   SDL_Renderer *renderer = SDL_CreateRenderer(
       window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -65,7 +62,6 @@ int main() {
     return 1;
   }
 
-  // Основной цикл приложения
   int quit = 0;
   int chart_type = 0; // 0 - bar, 1 - pie
   int field = 1;      // 1 - age, 2 - weight
@@ -98,31 +94,25 @@ int main() {
       }
     }
 
-    // Очистка экрана
     SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
     SDL_RenderClear(renderer);
 
-    // Отрисовка выбранной диаграммы
     if (chart_type == 0) {
       render_bar_chart(renderer, font, arr, field);
     } else {
       render_pie_chart(renderer, font, arr, field);
     }
 
-    // Обновление экрана
     SDL_RenderPresent(renderer);
   }
 
-  // Сохранение данных
-  save_objects_to_file(arr, "data.txt");
+  save_objects_to_file(arr, "data_saved.txt");
 
-  // Загрузка данных для демонстрации
   ObjectArray *arr2 = create_object_array(5);
-  load_objects_from_file(arr2, "data.txt");
+  load_objects_from_file(arr2, "data_load.txt");
   printf("\nLoaded data:\n");
   print_objects(arr2, stdout);
 
-  // Освобождение ресурсов
   free_object_array(arr);
   free_object_array(arr2);
 

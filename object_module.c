@@ -72,7 +72,6 @@ void remove_object(ObjectArray *arr, int index) {
   }
   arr->size--;
 
-  // Reduce capacity if utilization drops below 25%
   if (arr->size > 0 && arr->size <= arr->capacity / 4) {
     size_t new_capacity = arr->capacity / 2;
     Object *new_objects =

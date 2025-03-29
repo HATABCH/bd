@@ -2,7 +2,6 @@
 #include "object_module.h"
 #include <math.h>
 
-// Конфигурация отображения
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 #define MARGIN 20
@@ -10,7 +9,6 @@
 #define CHART_AREA_WIDTH (WINDOW_WIDTH - LEGEND_WIDTH - 3 * MARGIN)
 #define CHART_AREA_HEIGHT (WINDOW_HEIGHT - 2 * MARGIN)
 
-// Цветовая палитра
 static const SDL_Color colors[] = {
     {255, 0, 0, 255},   // Красный
     {0, 255, 0, 255},   // Зеленый
@@ -21,7 +19,6 @@ static const SDL_Color colors[] = {
 };
 #define NUM_COLORS 6
 
-// Приватные вспомогательные функции
 static double get_max_value(const ObjectArray *arr, int field) {
   double max_val = 0;
   for (int i = 0; i < arr->size; i++) {
@@ -49,21 +46,17 @@ static void draw_legend(SDL_Renderer *renderer, TTF_Font *font,
   SDL_Rect legend_rect = {WINDOW_WIDTH - LEGEND_WIDTH - MARGIN, MARGIN,
                           LEGEND_WIDTH, WINDOW_HEIGHT - 2 * MARGIN};
 
-  // Рамка легенды
   SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
   SDL_RenderDrawRect(renderer, &legend_rect);
 
-  // Элементы легенды
   for (int i = 0; i < arr->size; i++) {
     SDL_Color c = colors[i % NUM_COLORS];
     SDL_Rect color_rect = {legend_rect.x + 10, legend_rect.y + 10 + i * 30, 20,
                            20};
 
-    // Цветной квадрат
     SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
     SDL_RenderFillRect(renderer, &color_rect);
 
-    // Текст
     char buffer[100];
     double val = (field == 1) ? arr->objects[i].age : arr->objects[i].weight;
     snprintf(buffer, sizeof(buffer), "%s: %.2f", arr->objects[i].name, val);
@@ -73,18 +66,15 @@ static void draw_legend(SDL_Renderer *renderer, TTF_Font *font,
   }
 }
 
-// Публичные функции
 void render_bar_chart(SDL_Renderer *renderer, TTF_Font *font,
                       const ObjectArray *arr, int field) {
   if (!arr || arr->size == 0)
     return;
 
-  // Рассчет максимального значения
   double max_val = get_max_value(arr, field);
   if (max_val <= 0)
     return;
 
-  // Область диаграммы
   SDL_Rect chart_area = {MARGIN, MARGIN, CHART_AREA_WIDTH, CHART_AREA_HEIGHT};
 
   // Отрисовка столбцов
@@ -102,7 +92,6 @@ void render_bar_chart(SDL_Renderer *renderer, TTF_Font *font,
     SDL_RenderFillRect(renderer, &bar);
   }
 
-  // Отрисовка легенды
   draw_legend(renderer, font, arr, field);
 }
 
@@ -135,7 +124,7 @@ void render_pie_chart(SDL_Renderer *renderer, TTF_Font *font,
 
     // Отрисовка сектора (примитивная реализация)
     for (double angle = start_angle; angle < start_angle + sweep_angle;
-         angle += 0.5) {
+         angle += 0.1) {
       double rad = angle * M_PI / 180.0;
       SDL_RenderDrawLine(renderer, center_x, center_y,
                          center_x + radius * cos(rad),
