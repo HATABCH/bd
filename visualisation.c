@@ -100,7 +100,6 @@ void render_pie_chart(SDL_Renderer *renderer, TTF_Font *font,
   if (!arr || arr->size == 0)
     return;
 
-  // Рассчет общего значения
   double total = 0;
   for (int i = 0; i < arr->size; i++) {
     total += (field == 1) ? arr->objects[i].age : arr->objects[i].weight;
@@ -108,49 +107,39 @@ void render_pie_chart(SDL_Renderer *renderer, TTF_Font *font,
   if (total <= 0)
     return;
 
-  // Параметры круга
   int center_x = WINDOW_WIDTH / 2;
   int center_y = WINDOW_HEIGHT / 2;
   int radius = fmin(WINDOW_WIDTH, WINDOW_HEIGHT) / 2 - MARGIN;
 
-  // Отрисовка секторов
-  double start_angle = -90.0; // Начинаем сверху
+  double start_angle = -90.0;
   for (int i = 0; i < arr->size; i++) {
     double val = (field == 1) ? arr->objects[i].age : arr->objects[i].weight;
     double sweep_angle = 360.0 * (val / total);
     double end_angle = start_angle + sweep_angle;
-    const double angle_step = 1.0; // Шаг в градусах
+    const double angle_step = 1.0;
 
     SDL_Color c = colors[i % NUM_COLORS];
 
-    // Рисуем сектор треугольниками
     for (double angle = start_angle; angle < end_angle; angle += angle_step) {
       double current_step = fmin(angle_step, end_angle - angle);
 
-      // Рассчитываем углы в радианах
       double rad1 = angle * M_PI / 180.0;
       double rad2 = (angle + current_step) * M_PI / 180.0;
 
-      // Создаем вершины треугольника
       SDL_Vertex vertices[3] = {
-          // Центральная точка
           {{center_x, center_y}, {c.r, c.g, c.b, c.a}, {0, 0}},
-          // Точка на начальном угле
           {{center_x + radius * cos(rad1), center_y + radius * sin(rad1)},
            {c.r, c.g, c.b, c.a},
            {0, 0}},
-          // Точка на конечном угле
           {{center_x + radius * cos(rad2), center_y + radius * sin(rad2)},
            {c.r, c.g, c.b, c.a},
            {0, 0}}};
 
-      // Рисуем треугольник
       SDL_RenderGeometry(renderer, NULL, vertices, 3, NULL, 0);
     }
 
     start_angle = end_angle;
   }
 
-  // Отрисовка легенды
   draw_legend(renderer, font, arr, field);
 }
