@@ -118,20 +118,37 @@ void render_pie_chart(SDL_Renderer *renderer, TTF_Font *font,
   for (int i = 0; i < arr->size; i++) {
     double val = (field == 1) ? arr->objects[i].age : arr->objects[i].weight;
     double sweep_angle = 360.0 * (val / total);
+    double end_angle = start_angle + sweep_angle;
+    const double angle_step = 1.0; // Шаг в градусах
 
     SDL_Color c = colors[i % NUM_COLORS];
-    SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
 
-    // Отрисовка сектора (примитивная реализация)
-    for (double angle = start_angle; angle < start_angle + sweep_angle;
-         angle += 0.1) {
-      double rad = angle * M_PI / 180.0;
-      SDL_RenderDrawLine(renderer, center_x, center_y,
-                         center_x + radius * cos(rad),
-                         center_y + radius * sin(rad));
+    // Рисуем сектор треугольниками
+    for (double angle = start_angle; angle < end_angle; angle += angle_step) {
+      double current_step = fmin(angle_step, end_angle - angle);
+
+      // Рассчитываем углы в радианах
+      double rad1 = angle * M_PI / 180.0;
+      double rad2 = (angle + current_step) * M_PI / 180.0;
+
+      // Создаем вершины треугольника
+      SDL_Vertex vertices[3] = {
+          // Центральная точка
+          {{center_x, center_y}, {c.r, c.g, c.b, c.a}, {0, 0}},
+          // Точка на начальном угле
+          {{center_x + radius * cos(rad1), center_y + radius * sin(rad1)},
+           {c.r, c.g, c.b, c.a},
+           {0, 0}},
+          // Точка на конечном угле
+          {{center_x + radius * cos(rad2), center_y + radius * sin(rad2)},
+           {c.r, c.g, c.b, c.a},
+           {0, 0}}};
+
+      // Рисуем треугольник
+      SDL_RenderGeometry(renderer, NULL, vertices, 3, NULL, 0);
     }
 
-    start_angle += sweep_angle;
+    start_angle = end_angle;
   }
 
   // Отрисовка легенды

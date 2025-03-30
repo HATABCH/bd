@@ -14,7 +14,6 @@ typedef struct {
   int capacity;
 } ObjectArray;
 
-int find_object_by_name(ObjectArray *arr, const char *name);
 ObjectArray *create_object_array(int initial_capacity);
 void free_object_array(ObjectArray *arr);
 int add_object(ObjectArray *arr, const char *name, int age, double weight);

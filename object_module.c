@@ -4,14 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-int find_object_by_name(ObjectArray *arr, const char *name) {
-  for (int i = 0; i < arr->size; i++) {
-    if (strcmp(arr->objects[i].name, name) == 0) {
-      return i;
-    }
-  }
-  return -1;
-}
 ObjectArray *create_object_array(int initial_capacity) {
   if (initial_capacity <= 0) {
     fprintf(stderr, "Error: Initial capacity must be positive\n");
